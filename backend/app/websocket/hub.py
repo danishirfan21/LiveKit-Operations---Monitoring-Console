@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Set
 
 from fastapi import WebSocket, WebSocketDisconnect
@@ -76,7 +76,7 @@ class WebSocketHub:
 
     async def send_heartbeat(self) -> None:
         """Send heartbeat to all clients."""
-        message = WebSocketMessage(type="heartbeat", data={"timestamp": datetime.utcnow().isoformat()})
+        message = WebSocketMessage(type="heartbeat", data={"timestamp": datetime.now(timezone.utc).isoformat()})
         await self.broadcast(message)
 
     async def start_heartbeat(self) -> None:

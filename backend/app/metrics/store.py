@@ -1,6 +1,6 @@
 import threading
 from collections import deque
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from ..config import settings
@@ -123,22 +123,22 @@ class MetricsStore:
             return True
 
     def _record_join(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         self._join_events.append(now)
         self._cleanup_old_events()
 
     def _record_leave(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         self._leave_events.append(now)
         self._cleanup_old_events()
 
     def _record_disconnect(self) -> None:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         self._disconnect_events.append(now)
         self._cleanup_old_events()
 
     def _cleanup_old_events(self) -> None:
-        cutoff = datetime.utcnow() - self._rate_window
+        cutoff = datetime.now(timezone.utc) - self._rate_window
         while self._join_events and self._join_events[0] < cutoff:
             self._join_events.popleft()
         while self._leave_events and self._leave_events[0] < cutoff:
@@ -157,7 +157,7 @@ class MetricsStore:
 
     def compute_current_metrics(self) -> SystemMetrics:
         with self._lock:
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             rooms = list(self._rooms.values())
 
             total_participants = sum(r.participant_count for r in rooms)

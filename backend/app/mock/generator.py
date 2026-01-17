@@ -2,7 +2,7 @@ import asyncio
 import logging
 import random
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from ..models import Room, Participant, ConnectionQuality
@@ -94,7 +94,7 @@ class MockDataGenerator:
     async def _tick(self) -> None:
         """Single tick of mock data generation."""
         rooms = self._metrics_store.get_all_rooms()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # Maybe end some old rooms
         for room in rooms:
@@ -141,7 +141,7 @@ class MockDataGenerator:
         room = Room(
             sid=room_id,
             name=room_name,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
             participant_count=0,
             max_participants=0,
         )
@@ -182,7 +182,7 @@ class MockDataGenerator:
             sid=participant_id,
             identity=identity,
             name=name,
-            joined_at=datetime.utcnow(),
+            joined_at=datetime.now(timezone.utc),
             connection_quality=random.choice([
                 ConnectionQuality.EXCELLENT,
                 ConnectionQuality.EXCELLENT,
@@ -264,7 +264,7 @@ class MockDataGenerator:
             status=AlertStatus.ACTIVE,
             title="Test Alert",
             description="This is a manually triggered test alert",
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
 
         self._alert_engine._active_alerts[alert.id] = alert
