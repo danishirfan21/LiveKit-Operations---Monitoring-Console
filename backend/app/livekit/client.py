@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from ..config import settings
@@ -57,7 +57,7 @@ class LiveKitClient:
                 room = Room(
                     sid=lk_room.sid,
                     name=lk_room.name,
-                    created_at=datetime.fromtimestamp(lk_room.creation_time),
+                    created_at=datetime.fromtimestamp(lk_room.creation_time, tz=timezone.utc),
                     participant_count=lk_room.num_participants,
                     max_participants=lk_room.max_participants or 0,
                 )
@@ -85,7 +85,7 @@ class LiveKitClient:
                     sid=lk_participant.sid,
                     identity=lk_participant.identity,
                     name=lk_participant.name or lk_participant.identity,
-                    joined_at=datetime.fromtimestamp(lk_participant.joined_at),
+                    joined_at=datetime.fromtimestamp(lk_participant.joined_at, tz=timezone.utc),
                     connection_quality=quality,
                     is_publisher=len(lk_participant.tracks) > 0,
                     tracks_published=len(lk_participant.tracks),

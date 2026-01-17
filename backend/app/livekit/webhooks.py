@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from ..models import Room, Participant, ConnectionQuality, WebhookEvent
@@ -44,7 +44,8 @@ def _handle_room_started(
 
     room_data = event.room
     created_at = datetime.fromtimestamp(
-        event.created_at or room_data.get("creation_time", datetime.utcnow().timestamp())
+        event.created_at or room_data.get("creation_time", datetime.now(timezone.utc).timestamp()),
+        tz=timezone.utc
     )
 
     room = Room(
@@ -89,7 +90,8 @@ def _handle_participant_joined(
     participant_data = event.participant
 
     joined_at = datetime.fromtimestamp(
-        participant_data.get("joined_at", datetime.utcnow().timestamp())
+        participant_data.get("joined_at", datetime.now(timezone.utc).timestamp()),
+        tz=timezone.utc
     )
 
     participant = Participant(
