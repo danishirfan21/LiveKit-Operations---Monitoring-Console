@@ -66,7 +66,11 @@ export function useMetrics(): UseMetricsReturn {
       case 'room_update': {
         const data = message.data as { type: string; room: Room };
         if (data.type === 'room_started') {
-          setRooms(prev => [...prev, data.room]);
+          setRooms((prev) => {
+            // Avoid duplicates if we already fetched this room
+            if (prev.some((r) => r.sid === data.room.sid)) return prev;
+            return [...prev, data.room];
+          });
         } else if (data.type === 'room_finished') {
           setRooms(prev => prev.filter(r => r.sid !== data.room.sid));
         }

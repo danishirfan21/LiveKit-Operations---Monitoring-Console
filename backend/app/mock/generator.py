@@ -136,7 +136,8 @@ class MockDataGenerator:
     async def _create_room(self) -> Room:
         """Create a new mock room with participants."""
         room_id = str(uuid.uuid4())
-        room_name = f"{random.choice(ROOM_PREFIXES)}-{random.choice(ROOM_SUFFIXES)}-{room_id[:4]}"
+        # Use more of the UUID to ensure uniqueness in names
+        room_name = f"{random.choice(ROOM_PREFIXES)}-{random.choice(ROOM_SUFFIXES)}-{room_id[:8]}"
 
         room = Room(
             sid=room_id,
